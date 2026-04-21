@@ -1,5 +1,3 @@
-// src/types/api/auth.ts
-
 export type UserRole = "OWNER" | "CUSTOMER" | "ADMIN";
 export type AccountStatus = "ACTIVE" | "INACTIVE" | "PENDING";
 
@@ -23,3 +21,10 @@ export interface SignupResponse {
   createdAt: string; // ISO Date String
   updatedAt: string; // ISO Date String
 }
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse extends SignupResponse {}

@@ -43,3 +43,12 @@ export const signupSchema = z.object({
     message: "Debes aceptar los términos y condiciones",
   }),
 });
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, "El correo es obligatorio")
+    .email("Introduce un correo válido")
+    .toLowerCase(),
+  password: z.string().min(1, "La contraseña es obligatoria"),
+});
