@@ -9,6 +9,7 @@ import { Mail, Lock, LogIn, Loader2, HelpCircle } from "lucide-react";
 import { AuthService } from "@/services/auth-service";
 import { loginSchema } from "@/lib/validations/auth";
 import { toast } from "sonner";
+import { setCookie } from "cookies-next";
 
 export function LoginForm() {
   const [isPending, startTransition] = useTransition();
@@ -22,11 +23,14 @@ export function LoginForm() {
     startTransition(async () => {
       try {
         const validatedData = loginSchema.parse(payload);
-        await AuthService.login(validatedData);
+        const response = await AuthService.login(validatedData);
+
+        setCookie("auth_user", response, {
+          maxAge: 60 * 60 * 24, // 1 día
+          path: "/",
+        });
 
         toast.success("¡Bienvenido de nuevo!");
-
-        // Redirección inmediata al dashboard tras el éxito
         router.push("/dashboard");
       } catch (error: any) {
         if (error.name === "ZodError") {
