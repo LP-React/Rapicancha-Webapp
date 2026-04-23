@@ -13,24 +13,18 @@ export function VenueInsights({ venues = [], isLoading }: VenueInsightsProps) {
   const stats = useMemo(() => {
     if (!venues || venues.length === 0) return null;
 
+    // ... (Tu lógica de stats se mantiene igual)
     const total = venues.length;
-
     const now = new Date();
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     const openNowCount = venues.filter((v) => {
       if (!v.openTime || !v.closeTime) return false;
-
       const [oH, oM] = v.openTime.split(":").map(Number);
       const [cH, cM] = v.closeTime.split(":").map(Number);
-
       const openMinutes = oH * 60 + oM;
       let closeMinutes = cH * 60 + cM;
-
-      if (closeMinutes <= openMinutes) {
-        closeMinutes += 24 * 60;
-      }
-
+      if (closeMinutes <= openMinutes) closeMinutes += 24 * 60;
       return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
     }).length;
 
@@ -43,11 +37,9 @@ export function VenueInsights({ venues = [], isLoading }: VenueInsightsProps) {
     }, 0);
 
     const avgHours = Math.round(totalHoursRaw / total / 60);
-
     const fullServiceVenues = venues.filter(
       (v) => v.hasParking && v.hasRestroom && v.hasShower,
     ).length;
-
     const avgCapacity = Math.round(
       venues.reduce((acc, v) => acc + (v.maxCapacity || 0), 0) / total,
     );
@@ -62,8 +54,7 @@ export function VenueInsights({ venues = [], isLoading }: VenueInsightsProps) {
     };
   }, [venues]);
 
-  // 1. Estado de Carga
-  if (isLoading || (!venues.length && !stats)) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 animate-pulse">
         <div className="lg:col-span-3 h-64 bg-surface-container-low rounded-2xl border border-outline-variant/10" />
@@ -71,22 +62,40 @@ export function VenueInsights({ venues = [], isLoading }: VenueInsightsProps) {
     );
   }
 
-  // 2. Estado Sin Datos
   if (venues.length === 0) {
     return (
-      <div className="mt-12 p-10 border-2 border-dashed border-outline-variant/20 rounded-2xl flex flex-col items-center justify-center text-on-surface-variant">
-        <LayoutDashboard className="w-12 h-12 mb-4 opacity-20" />
-        <p className="font-medium">
-          No hay locales registrados para generar insights.
-        </p>
+      <div className="mt-12 bg-surface-container-low rounded-2xl border-2 border-dashed border-outline-variant/30 overflow-hidden shadow-sm group">
+        <div className="flex flex-col md:flex-row items-stretch min-h-[280px]">
+          <div className="w-full md:w-1/3 p-10 flex flex-col items-center justify-center bg-gray-50/50 border-b md:border-b-0 md:border-r border-outline-variant/10">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all" />
+              <LayoutDashboard className="w-16 h-16 text-primary/40 relative z-10 animate-pulse" />
+            </div>
+          </div>
+
+          <div className="w-full md:w-2/3 p-10 flex flex-col justify-center space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-2xl font-black text-on-surface tracking-tight uppercase italic">
+                Dashboard de Insights
+              </h3>
+              <p className="text-on-surface-variant text-sm leading-relaxed max-w-md">
+                Aún no tienes locales registrados. Comienza agregando tu primera
+                sede para visualizar estadísticas de capacidad, horarios y
+                servicios en tiempo real.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
+  // 3. ESTADO CON DATOS: (Tu render normal)
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+      {/* ... (Todo tu código del return normal) */}
       <div className="lg:col-span-3 group flex flex-col md:flex-row bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
-        {/* Lado Izquierdo: Título y Contexto */}
+        {/* Título y Contexto */}
         <div className="w-full md:w-2/5 p-10 flex flex-col justify-center space-y-4 border-b md:border-b-0 md:border-r border-outline-variant/10">
           <div className="space-y-1">
             <span className="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-2">
@@ -102,9 +111,9 @@ export function VenueInsights({ venues = [], isLoading }: VenueInsightsProps) {
           </p>
         </div>
 
-        {/* Lado Derecho: Stats Grilla */}
+        {/* Stats Grilla */}
         <div className="w-full md:w-3/5 p-10 grid grid-cols-2 gap-8 bg-white/40 backdrop-blur-sm">
-          {/* Locales Abiertos Ahora */}
+          {/* Abiertos Ahora */}
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">
               Abiertos Ahora

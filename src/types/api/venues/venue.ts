@@ -20,3 +20,25 @@ export interface VenueResponse {
   latitude: number;
   longitude: number;
 }
+
+export interface CreateVenueRequest {
+  ownerAccountId: number;
+  name: string;
+  address: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  openTime: string;
+  closeTime: string;
+  maxCapacity: number;
+  parkingCapacity: number;
+  bannerImageUrl: string;
+  providesEquipment: boolean;
+  hasParking: boolean;
+  hasLockerRoom: boolean;
+  hasRestroom: boolean;
+  hasStore: boolean;
+  hasShower: boolean;
+  providesBalls: boolean;
+  providesBibs: boolean;
+}

@@ -1,8 +1,6 @@
 import { VenueResponse } from "@/types/api/venues/venue";
 import { LocalCard } from "@/components/dashboard/LocalCard";
 import { VenueInsights } from "@/components/dashboard/VenueInsights";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -10,6 +8,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { AddVenueDialog } from "../dashboard/AddVenueDialog";
+import { Plus } from "lucide-react";
 
 interface LocalesViewProps {
   venues: VenueResponse[];
@@ -31,12 +31,7 @@ export function LocalesView({ venues }: LocalesViewProps) {
               Administra tus centros deportivos y supervisa tu red de locales.
             </p>
           </div>
-          <Button
-            size="lg"
-            className="custom-gradient rounded-xl font-bold h-12 shadow-lg hover:scale-[1.02] transition-transform"
-          >
-            <Plus className="mr-2 h-5 w-5" /> Agregar local
-          </Button>
+          <AddVenueDialog />
         </div>
       </section>
 
@@ -45,24 +40,50 @@ export function LocalesView({ venues }: LocalesViewProps) {
         <Carousel
           opts={{
             align: "start",
-            loop: true,
+            loop: venues.length > 0,
           }}
           className="w-full"
         >
           <CarouselContent className="-ml-4">
-            {venues.map((venue) => (
-              <CarouselItem
-                key={venue.idVenue}
-                className="pl-4 md:basis-1/2 lg:basis-1/3"
-              >
-                <LocalCard venue={venue} />
+            {venues.length > 0 ? (
+              venues.map((venue) => (
+                <CarouselItem
+                  key={venue.idVenue}
+                  className="pl-4 md:basis-1/2 lg:basis-1/3"
+                >
+                  <LocalCard venue={venue} />
+                </CarouselItem>
+              ))
+            ) : (
+              <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3">
+                <AddVenueDialog
+                  trigger={
+                    <div className="w-80 h-[400px] group flex flex-col items-center justify-center gap-4 bg-gray-50 border-2 border-dashed border-outline-variant/30 rounded-3xl hover:bg-white hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-xl cursor-pointer">
+                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Plus size={32} className="text-primary" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-black text-on-surface uppercase tracking-tight">
+                          Registrar mi primer local
+                        </p>
+                        <p className="text-sm text-on-surface-variant mt-1">
+                          Haz click aquí para empezar
+                        </p>
+                      </div>
+                    </div>
+                  }
+                />
               </CarouselItem>
-            ))}
+            )}
           </CarouselContent>
-          <div className="hidden md:block">
-            <CarouselPrevious className="-left-12 border-outline-variant/20 hover:bg-primary hover:text-white" />
-            <CarouselNext className="-right-12 border-outline-variant/20 hover:bg-primary hover:text-white" />
-          </div>
+
+          {/* Solo mostrar flechas si hay más de 3 locales (o según tu breakpoint) */}
+          {venues.length > 3 && (
+            <div className="hidden md:block">
+              <CarouselPrevious className="-left-12 border-outline-variant/20 hover:bg-primary hover:text-white" />
+              <CarouselNext className="-right-12 border-outline-variant/20 hover:bg-primary hover:text-white" />
+            </div>
+          )}
         </Carousel>
       </section>
 
