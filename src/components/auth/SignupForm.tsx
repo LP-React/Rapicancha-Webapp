@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,9 +18,12 @@ import {
 import { AuthService } from "@/services/auth-service";
 import { signupSchema } from "@/lib/validations/auth";
 import { toast } from "sonner";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 
 export function SignupForm() {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,10 +46,11 @@ export function SignupForm() {
       try {
         const validatedData = signupSchema.parse(payload);
         const { terms, ...apiPayload } = validatedData;
-        console.log("Datos limpios para la API:", apiPayload);
         await AuthService.register(apiPayload);
-
         toast.success("¡Cuenta creada exitosamente!");
+        setTimeout(() => {
+          router.push("/login");
+        }, 500);
       } catch (error: any) {
         if (error.name === "ZodError") {
           const firstMessage =
@@ -59,6 +63,14 @@ export function SignupForm() {
       }
     });
   };
+
+  useEffect(() => {
+    const userSession = getCookie("auth_user");
+    if (userSession) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
+
   return (
     <div className="w-full max-w-md space-y-8">
       <header className="space-y-3">

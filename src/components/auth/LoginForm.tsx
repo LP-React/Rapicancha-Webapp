@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation"; // Importa el router
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,11 @@ import { Mail, Lock, LogIn, Loader2, HelpCircle } from "lucide-react";
 import { AuthService } from "@/services/auth-service";
 import { loginSchema } from "@/lib/validations/auth";
 import { toast } from "sonner";
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 
 export function LoginForm() {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter(); // Inicializa el hook
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -26,12 +26,13 @@ export function LoginForm() {
         const response = await AuthService.login(validatedData);
 
         setCookie("auth_user", response, {
-          maxAge: 60 * 60 * 24, // 1 día
+          maxAge: 60 * 60 * 24,
           path: "/",
         });
 
         toast.success("¡Bienvenido de nuevo!");
-        router.push("/dashboard");
+        router.refresh();
+        router.replace("/dashboard");
       } catch (error: any) {
         if (error.name === "ZodError") {
           toast.error(error.issues?.[0]?.message || "Error de validación");
@@ -41,6 +42,13 @@ export function LoginForm() {
       }
     });
   };
+
+  useEffect(() => {
+    const userSession = getCookie("auth_user");
+    if (userSession) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
 
   return (
     <div className="w-full max-w-md space-y-8">
