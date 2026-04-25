@@ -42,3 +42,14 @@ export interface CreateVenueRequest {
   providesBalls: boolean;
   providesBibs: boolean;
 }
+
+export interface SportCourt {
+  idSportCourt: number;
+  name: string;
+}
+
+export interface VenueWithCourtsResponse {
+  idVenue: number;
+  name: string;
+  sport_courts: SportCourt[];
+}
