@@ -26,7 +26,9 @@ export const SportCourtService = {
     }
   },
 
-  create: async (courtData: CreateSportCourtRequest): Promise<void> => {
+  create: async (
+    courtData: CreateSportCourtRequest,
+  ): Promise<SportCourtResponse> => {
     const response = await fetch(`${API_URL}/api/sport-courts`, {
       method: "POST",
       headers: {
@@ -39,5 +41,7 @@ export const SportCourtService = {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || "Error al crear la cancha");
     }
+
+    return await response.json();
   },
 };
