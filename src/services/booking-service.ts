@@ -1,4 +1,4 @@
-import { BookingResponse } from "@/types/api/bookings/booking";
+import { BookingResponse, CheckInResponse } from "@/types/api/bookings/booking";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
@@ -45,5 +45,26 @@ export const BookingService = {
 
     if (!response.ok) throw new Error("Error en la petición");
     return response.json();
+  },
+
+  checkIn: async (
+    qrCode: string,
+    ownerId: number,
+  ): Promise<CheckInResponse> => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/check-in`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ qrCode, ownerId }),
+      },
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || "Error al procesar el check-in");
+    }
+
+    return res.json();
   },
 };
