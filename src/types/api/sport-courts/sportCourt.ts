@@ -1,5 +1,5 @@
 export interface SportCourtImage {
-  idImage: number;
+  idSportCourtImage: number;
   imageUrl: string;
 }
 

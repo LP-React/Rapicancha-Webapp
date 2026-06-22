@@ -9,12 +9,15 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (authCookie && (pathname === "/login" || pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (
+    authCookie &&
+    (pathname === "/owner/login" || pathname === "/owner/signup")
+  ) {
+    return NextResponse.redirect(new URL("/owner/dashboard", request.url));
   }
 
-  if (!authCookie && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!authCookie && pathname.startsWith("/owner/dashboard")) {
+    return NextResponse.redirect(new URL("/owner/login", request.url));
   }
 
   return NextResponse.next();

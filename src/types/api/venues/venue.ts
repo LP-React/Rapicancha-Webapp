@@ -15,10 +15,12 @@ export interface VenueResponse {
   hasStore: boolean;
   providesBalls: boolean;
   providesBibs: boolean;
-  ownerId: number;
+  ownerAccountId: number;
   ownerName: string;
   latitude: number;
   longitude: number;
+  parkingCapacity?: number;
+  providesEquipment?: boolean;
 }
 
 export interface CreateVenueRequest {
