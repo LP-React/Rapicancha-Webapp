@@ -97,7 +97,7 @@ export default async function HomePage() {
             </p>
             <Link
               id="cta-browse"
-              href="/local/1"
+       href="/locales"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#c3f400] px-8 py-4 text-[#161e00] text-lg font-bold shadow-[0_0_24px_rgba(195,244,0,0.3)] hover:shadow-[0_0_36px_rgba(195,244,0,0.5)] hover:bg-[#d4ff00] active:scale-95 transition-all duration-200"
             >
               Explorar canchas

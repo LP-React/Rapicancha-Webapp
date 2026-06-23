@@ -16,18 +16,28 @@ export default async function VenuePage({
   }
 
   const venueRes = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/venues?idVenue=${idVenue}`,
-    { cache: "no-store" },
+    `${process.env.NEXT_PUBLIC_API_URL}/api/venues/${idVenue}`,
+    {
+      cache: "no-store",
+    }
   );
 
-  if (!venueRes.ok) return notFound();
+  if (!venueRes.ok) {
+    return notFound();
+  }
 
-  const venues: VenueResponse[] = await venueRes.json();
-  const venue = venues[0];
+  const venue: VenueResponse = await venueRes.json();
 
-  if (!venue) return notFound();
+  if (!venue) {
+    return notFound();
+  }
 
   const courts = await SportCourtService.getByVenue(idVenue);
 
-  return <VenueDetailsView venue={venue} courts={courts} />;
+  return (
+    <VenueDetailsView
+      venue={venue}
+      courts={courts}
+    />
+  );
 }

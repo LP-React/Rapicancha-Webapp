@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "miservidor.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        pathname: "/**",
+      },
     ],
   },
 };

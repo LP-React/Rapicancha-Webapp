@@ -10,6 +10,7 @@ export interface VenueResponse {
   maxCapacity: number;
   hasParking: boolean;
   hasRestroom: boolean;
+  totalCourts?: number;
   hasShower: boolean;
   hasLockerRoom: boolean;
   hasStore: boolean;

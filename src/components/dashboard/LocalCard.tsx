@@ -5,7 +5,7 @@ import { MapPin, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
-
+import Link from "next/link";
 interface LocalCardProps {
   venue: VenueResponse;
 }
@@ -108,7 +108,7 @@ export function LocalCard({ venue }: LocalCardProps) {
                   Canchas
                 </span>
                 <span className="text-xl font-extrabold text-primary">
-                  {20}
+                   {venue.totalCourts ?? 0}
                 </span>
               </div>
 
@@ -121,10 +121,12 @@ export function LocalCard({ venue }: LocalCardProps) {
                 </span>
               </div>
             </div>
-
-            <button className="w-11 h-11 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary hover:scale-110 transition-all duration-300">
-              <ArrowRight className="w-5 h-5" />
-            </button>
+<Link
+  href={`/local/${venue.idVenue}`}
+  className="w-11 h-11 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary hover:scale-110 transition-all duration-300"
+>
+  <ArrowRight className="w-5 h-5" />
+</Link>
           </div>
         </div>
       </div>
