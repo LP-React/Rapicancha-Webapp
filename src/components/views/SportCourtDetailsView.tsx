@@ -19,6 +19,8 @@ import { VenueResponse } from "@/types/api/venues/venue";
 import { useAuth } from "../hooks/useAuth";
 import { toast } from "sonner";
 
+import { BookingService } from "@/services/booking-service";
+
 interface CourtDetailsViewProps {
   court: SportCourtResponse;
   venue: VenueResponse;
@@ -53,13 +55,14 @@ function generateTimeSlots(
 export function CourtDetailsView({ court, venue }: CourtDetailsViewProps) {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [isBooking, setIsBooking] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{
     date: string;
     time: string;
   } | null>(null);
 
-  const handleBooking = () => {
-    if (loading) return;
+  const handleBooking = async () => {
+    if (loading || isBooking) return;
 
     if (!user) {
       toast("Debes iniciar sesión para reservar", {
@@ -77,8 +80,48 @@ export function CourtDetailsView({ court, venue }: CourtDetailsViewProps) {
       return;
     }
 
-    // Si existe el usuario, proceder con la lógica de reserva
-    console.log("Reservando para:", user, selectedSlot);
+    if (!selectedSlot) return;
+
+    setIsBooking(true);
+    try {
+      const targetDate = new Date();
+      if (selectedSlot.date === "tomorrow") {
+        targetDate.setDate(targetDate.getDate() + 1);
+      }
+      const dateString = targetDate.toISOString().split("T")[0];
+
+      const timeParts = selectedSlot.time.match(/(\d+):(\d+)\s+(AM|PM)/);
+      let startH = 0, startM = 0;
+      if (timeParts) {
+        startH = parseInt(timeParts[1]);
+        startM = parseInt(timeParts[2]);
+        if (timeParts[3] === "PM" && startH < 12) startH += 12;
+        if (timeParts[3] === "AM" && startH === 12) startH = 0;
+      }
+
+      const startTimeStr = `${startH.toString().padStart(2, "0")}:${startM.toString().padStart(2, "0")}:00`;
+
+      let endMinutes = startH * 60 + startM + court.slotMinutes;
+      let endH = Math.floor(endMinutes / 60);
+      let endM = endMinutes % 60;
+      const endTimeStr = `${endH.toString().padStart(2, "0")}:${endM.toString().padStart(2, "0")}:00`;
+
+      await BookingService.create({
+        sportCourtId: court.idSportCourt,
+        customerAccountId: user.accountId,
+        date: dateString,
+        startTime: startTimeStr,
+        endTime: endTimeStr,
+        price: court.rate,
+      });
+
+      toast.success("¡Reserva confirmada con éxito!");
+      setSelectedSlot(null);
+    } catch (error: any) {
+      toast.error(error.message || "Error al procesar la reserva");
+    } finally {
+      setIsBooking(false);
+    }
   };
 
   // Formatear fechas para los títulos
@@ -337,11 +380,20 @@ export function CourtDetailsView({ court, venue }: CourtDetailsViewProps) {
           </div>
           <button
             onClick={handleBooking} // Llamamos a nuestra función validada
-            disabled={!selectedSlot}
+            disabled={!selectedSlot || isBooking}
             className="flex-1 bg-[#c3f400] text-[#161e00] h-14 rounded-xl text-[22px] font-semibold active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(195,244,0,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {selectedSlot ? "Book Now" : "Select Time"}
-            <ArrowRight className="w-6 h-6" />
+            {isBooking ? (
+              <span className="flex items-center gap-2">
+                <span className="w-5 h-5 border-2 border-[#161e00] border-t-transparent rounded-full animate-spin"></span>
+                Reservando...
+              </span>
+            ) : selectedSlot ? (
+              "Book Now"
+            ) : (
+              "Select Time"
+            )}
+            {!isBooking && <ArrowRight className="w-6 h-6" />}
           </button>
         </div>
       </footer>

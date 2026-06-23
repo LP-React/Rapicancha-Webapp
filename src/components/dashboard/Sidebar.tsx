@@ -22,6 +22,7 @@ const navItems = [
   { label: "Locales", href: "/owner/dashboard/locales", icon: MapPin },
   { label: "Canchas", href: "/owner/dashboard/canchas", icon: Trophy },
   { label: "Reservas", href: "/owner/dashboard/reservas", icon: CalendarDays },
+  { label: "Escanear QR", href: "/owner/dashboard/checkin", icon: Hexagon },
 ];
 
 export function Sidebar() {

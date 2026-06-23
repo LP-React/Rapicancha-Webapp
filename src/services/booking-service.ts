@@ -27,6 +27,59 @@ export const BookingService = {
       throw error;
     }
   },
+
+  getByCustomer: async (customerId: number): Promise<BookingResponse[]> => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/bookings?customerId=${customerId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al obtener las reservas del usuario");
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error("BookingService Error:", error.message);
+      throw error;
+    }
+  },
+
+  create: async (payload: {
+    sportCourtId: number;
+    customerAccountId: number;
+    date: string;
+    startTime: string;
+    endTime: string;
+    price: number;
+  }): Promise<BookingResponse> => {
+    try {
+      const response = await fetch(`${API_URL}/api/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al crear la reserva");
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error("BookingService Create Error:", error.message);
+      throw error;
+    }
+  },
+
   getAll: async (params: {
     sportCourtId?: number;
     ownerId?: number;
@@ -52,7 +105,7 @@ export const BookingService = {
     ownerId: number,
   ): Promise<CheckInResponse> => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/check-in`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/checkin`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

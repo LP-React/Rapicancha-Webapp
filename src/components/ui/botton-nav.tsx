@@ -12,7 +12,7 @@ export function BottomNav() {
         <span className="text-[10px] font-medium mt-0.5">Explore</span>
       </Link>
       <Link
-        href="#"
+        href="/bookings"
         className="flex flex-col items-center justify-center text-[#a1a68d]"
       >
         <Calendar className="w-6 h-6" />

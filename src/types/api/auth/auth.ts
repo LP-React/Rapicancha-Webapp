@@ -12,14 +12,11 @@ export interface SignupRequest {
 }
 
 export interface SignupResponse {
-  idAccount: number;
+  accountId: number;
   email: string;
-  passwordHash: string;
   role: UserRole;
-  status: AccountStatus;
-  emailVerified: boolean;
+  status: AccountStatus | string;
   createdAt: string; // ISO Date String
-  updatedAt: string; // ISO Date String
 }
 
 export interface LoginRequest {
@@ -27,4 +24,12 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse extends SignupResponse {}
+export interface LoginResponse {
+  accountId: number;
+  email: string;
+  role: UserRole;
+  firstName: string;
+  lastName: string;
+  profileId: number;
+  token: string;
+}
