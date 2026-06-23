@@ -32,7 +32,7 @@ export function LoginForm() {
 
         toast.success("¡Bienvenido de nuevo!");
         router.refresh();
-        router.replace("/dashboard");
+        router.replace("/owner/dashboard");
       } catch (error: any) {
         if (error.name === "ZodError") {
           toast.error(error.issues?.[0]?.message || "Error de validación");
@@ -46,7 +46,7 @@ export function LoginForm() {
   useEffect(() => {
     const userSession = getCookie("auth_user");
     if (userSession) {
-      router.replace("/dashboard");
+      router.replace("/owner/dashboard");
     }
   }, [router]);
 

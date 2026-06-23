@@ -20,11 +20,8 @@ export function proxy(request: NextRequest) {
   // --- REGLAS PARA USUARIOS NO AUTENTICADOS ---
   if (!authCookie) {
     // Si intentan entrar a dashboards sin estar logueados
-    if (
-      pathname.startsWith("/owner/dashboard") ||
-      pathname.startsWith("/dashboard")
-    ) {
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (pathname.startsWith("/owner/dashboard")) {
+      return NextResponse.redirect(new URL("/owner/login", request.url));
     }
     return NextResponse.next();
   }
@@ -39,16 +36,13 @@ export function proxy(request: NextRequest) {
     pathname === "/owner/signup"
   ) {
     return NextResponse.redirect(
-      new URL(
-        role === "OWNER" ? "/owner/dashboard" : "/dashboard",
-        request.url,
-      ),
+      new URL(role === "OWNER" ? "/owner/dashboard" : "/", request.url),
     );
   }
 
   // Protección de rutas: Evitar que un CUSTOMER entre a /owner/dashboard
   if (pathname.startsWith("/owner/") && role !== "OWNER") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

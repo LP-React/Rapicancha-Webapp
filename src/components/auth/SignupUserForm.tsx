@@ -17,7 +17,7 @@ export function SignupUserForm() {
   useEffect(() => {
     const userSession = getCookie("auth_user");
     if (userSession) {
-      router.replace("/dashboard");
+      router.replace("/");
     }
   }, [router]);
 

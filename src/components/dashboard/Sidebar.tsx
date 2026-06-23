@@ -18,10 +18,10 @@ import { ScrollArea } from "../ui/scroll-area";
 import { useAuth } from "../hooks/useAuth";
 
 const navItems = [
-  { label: "Resumen", href: "/dashboard", icon: Home },
-  { label: "Locales", href: "/dashboard/locales", icon: MapPin },
-  { label: "Canchas", href: "/dashboard/canchas", icon: Trophy },
-  { label: "Reservas", href: "/dashboard/reservas", icon: CalendarDays },
+  { label: "Resumen", href: "/owner/dashboard", icon: Home },
+  { label: "Locales", href: "/owner/dashboard/locales", icon: MapPin },
+  { label: "Canchas", href: "/owner/dashboard/canchas", icon: Trophy },
+  { label: "Reservas", href: "/owner/dashboard/reservas", icon: CalendarDays },
 ];
 
 export function Sidebar() {
@@ -31,7 +31,7 @@ export function Sidebar() {
 
   const handleLogout = () => {
     deleteCookie("auth_user");
-    router.push("/login");
+    router.push("/owner/login");
     router.refresh();
   };
 

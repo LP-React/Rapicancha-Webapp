@@ -49,7 +49,7 @@ export function SignupForm() {
         await AuthService.register(apiPayload);
         toast.success("¡Cuenta creada exitosamente!");
         setTimeout(() => {
-          router.push("/login");
+          router.push("/owner/login");
         }, 500);
       } catch (error: any) {
         if (error.name === "ZodError") {
@@ -67,7 +67,7 @@ export function SignupForm() {
   useEffect(() => {
     const userSession = getCookie("auth_user");
     if (userSession) {
-      router.replace("/dashboard");
+      router.replace("/owner/dashboard");
     }
   }, [router]);
 
