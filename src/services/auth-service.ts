@@ -14,6 +14,9 @@ export const AuthService = {
         body: JSON.stringify(payload),
       });
     } catch (error: any) {
+      if (error.status >= 500 || error.message?.includes("Failed to fetch")) {
+        throw new Error("El servicio de autenticación no está disponible en este momento.");
+      }
       if (error.status === 409) {
         throw new Error(
           "El correo electrónico o identificación ya están registrados.",
@@ -37,6 +40,9 @@ export const AuthService = {
         body: JSON.stringify(payload),
       });
     } catch (error: any) {
+      if (error.status >= 500 || error.message?.includes("Failed to fetch")) {
+        throw new Error("El servicio de autenticación no está disponible en este momento.");
+      }
       if (error.status === 401) {
         throw new Error(
           "Credenciales incorrectas. Verifica tu correo y contraseña.",

@@ -13,6 +13,7 @@ export default function CheckinPage() {
     success: boolean;
     data?: any;
     message?: string;
+    alreadyValidated?: boolean;
   } | null>(null);
 
   const handleScan = async (e: React.FormEvent) => {
@@ -30,9 +31,12 @@ export default function CheckinPage() {
       });
       setQrCode(""); // clear after success
     } catch (error: any) {
+      const message = error.message || "El código QR es inválido o la reserva no existe.";
+      const alreadyValidated = message.toLowerCase().includes("validada") || message.toLowerCase().includes("ya fue");
       setResult({
         success: false,
-        message: error.message || "El código QR es inválido o la reserva no existe.",
+        alreadyValidated,
+        message,
       });
     } finally {
       setLoading(false);
@@ -93,8 +97,10 @@ export default function CheckinPage() {
           {result && (
             <div className={`mt-8 p-6 rounded-2xl border animate-in slide-in-from-bottom-4 duration-300 ${
               result.success 
-                ? "bg-green-500/10 border-green-500/20" 
-                : "bg-red-500/10 border-red-500/20"
+                ? "bg-green-500/10 border-green-500/20"
+                : result.alreadyValidated
+                  ? "bg-yellow-500/10 border-yellow-500/20"
+                  : "bg-red-500/10 border-red-500/20"
             }`}>
               {result.success ? (
                 <div className="flex flex-col items-center text-center">
@@ -109,6 +115,12 @@ export default function CheckinPage() {
                     <p className="text-sm text-zinc-400">Horario: <span className="font-semibold text-white">{result.data.startTime} - {result.data.endTime}</span></p>
                     <p className="text-sm text-zinc-400">Monto: <span className="font-bold text-[#abd600]">S/ {result.data.price?.toFixed(2) || '0.00'}</span></p>
                   </div>
+                </div>
+              ) : result.alreadyValidated ? (
+                <div className="flex flex-col items-center text-center">
+                  <CheckCircle2 className="w-12 h-12 text-yellow-500 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-2">Ya fue validada</h3>
+                  <p className="text-yellow-400">Esta reserva ya fue confirmada previamente. El cliente ya tiene su ingreso registrado.</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center text-center">

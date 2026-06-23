@@ -36,7 +36,7 @@ export function Sidebar() {
     router.refresh();
   };
 
-  const userInitial = user?.email?.charAt(0).toUpperCase() || "U";
+  const userInitial = user?.email?.charAt(0)?.toUpperCase() || "U";
 
   return (
     <aside className="hidden lg:flex h-screen w-72 border-r border-outline-variant/20 bg-surface flex-col p-6 sticky top-0">

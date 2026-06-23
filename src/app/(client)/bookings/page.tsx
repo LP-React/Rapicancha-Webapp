@@ -6,7 +6,8 @@ import { useAuth } from "@/components/hooks/useAuth";
 import { BookingService } from "@/services/booking-service";
 import { BookingResponse } from "@/types/api/bookings/booking";
 import { BottomNav } from "@/components/ui/botton-nav";
-import { ChevronLeft, MapPin, CalendarDays, Clock, CheckCircle, XCircle, Clock4 } from "lucide-react";
+import { deleteCookie } from "cookies-next";
+import { ChevronLeft, MapPin, CalendarDays, Clock, CheckCircle, XCircle, Clock4, LogOut } from "lucide-react";
 
 export default function BookingsPage() {
   const router = useRouter();
@@ -67,6 +68,15 @@ export default function BookingsPage() {
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "CONFIRMED": return "Validada";
+      case "CANCELLED": return "Cancelada";
+      case "PENDING": return "Pendiente de ingreso";
+      default: return status;
+    }
+  };
+
   const formatTime = (time: string) => {
     if (!time) return "";
     return time.substring(0, 5); // "HH:MM"
@@ -83,7 +93,16 @@ export default function BookingsPage() {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <h1 className="text-lg font-bold tracking-tight text-white">Mis Reservas</h1>
-        <div className="w-10" /> {/* Espaciador para centrar */}
+        <button
+          onClick={() => {
+            deleteCookie("auth_user");
+            window.location.href = "/login";
+          }}
+          className="p-2 -mr-2 rounded-full active:bg-white/10 transition-colors text-red-500/80 hover:text-red-500"
+          title="Cerrar sesión"
+        >
+          <LogOut className="w-5 h-5" />
+        </button>
       </header>
 
       {/* Main Content */}
@@ -146,7 +165,7 @@ export default function BookingsPage() {
                     )}`}
                   >
                     {getStatusIcon(booking.status)}
-                    {booking.status}
+                    {getStatusLabel(booking.status)}
                   </div>
                 </div>
 
@@ -177,7 +196,7 @@ export default function BookingsPage() {
                     </p>
                   </div>
                   
-                  {booking.status === "CONFIRMED" && (
+                  {booking.status === "PENDING" && (
                     <button 
                       onClick={() => setSelectedQrCode(booking.qrCode)}
                       className="text-xs font-semibold text-[#111508] bg-[#abd600] px-4 py-2 rounded-full active:scale-95 transition-transform"

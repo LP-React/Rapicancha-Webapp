@@ -17,12 +17,18 @@ export const BookingService = {
       );
 
       if (!response.ok) {
+        if (response.status >= 500) {
+          throw new Error("El servicio de reservas no está disponible en este momento.");
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Error al obtener las reservas");
       }
 
       return await response.json();
     } catch (error: any) {
+      if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+        throw new Error("El servicio de reservas se encuentra fuera de línea.");
+      }
       console.error("BookingService Error:", error.message);
       throw error;
     }
@@ -42,12 +48,18 @@ export const BookingService = {
       );
 
       if (!response.ok) {
+        if (response.status >= 500) {
+          throw new Error("El servicio de reservas no está disponible en este momento.");
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Error al obtener las reservas del usuario");
       }
 
       return await response.json();
     } catch (error: any) {
+      if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+        throw new Error("El servicio de reservas se encuentra fuera de línea.");
+      }
       console.error("BookingService Error:", error.message);
       throw error;
     }
@@ -69,13 +81,19 @@ export const BookingService = {
       });
 
       if (!response.ok) {
+        if (response.status >= 500) {
+          throw new Error("El servicio de reservas no está disponible en este momento.");
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Error al crear la reserva");
       }
 
       return await response.json();
     } catch (error: any) {
-      console.error("BookingService Create Error:", error.message);
+      if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+        throw new Error("El servicio de reservas se encuentra fuera de línea.");
+      }
+      console.error("BookingService Error:", error.message);
       throw error;
     }
   },

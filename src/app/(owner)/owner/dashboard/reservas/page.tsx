@@ -24,7 +24,16 @@ export default async function ReservasPage() {
 
     return <ReservasView venuesData={venuesWithCourts} />;
   } catch (error) {
-    console.error("Error en ReservasPage:", error);
-    return <ReservasView venuesData={[]} />;
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Error en ReservasPage:", message);
+    return (
+      <div className="p-10 flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl max-w-md">
+          <h2 className="text-xl font-bold mb-2">Error al cargar reservas</h2>
+          <p className="text-sm opacity-80 mb-4">{message}</p>
+          <p className="text-xs opacity-60">Verifica que los microservicios estén corriendo (mcsv-court en :8083 y gateway en :8080).</p>
+        </div>
+      </div>
+    );
   }
 }
