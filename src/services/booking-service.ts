@@ -1,33 +1,21 @@
 import { BookingResponse, CheckInResponse } from "@/types/api/bookings/booking";
+import { http } from "@/lib/http";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const BookingService = {
   getBySportCourt: async (sportCourtId: number): Promise<BookingResponse[]> => {
     try {
-      const response = await fetch(
-        `${API_URL}/api/bookings?sportCourtId=${sportCourtId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        },
-      );
-
-      if (!response.ok) {
-        if (response.status >= 500) {
-          throw new Error("El servicio de reservas no está disponible en este momento.");
-        }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Error al obtener las reservas");
-      }
-
-      return await response.json();
+      return await http<BookingResponse[]>(`/api/bookings?sportCourtId=${sportCourtId}`, {
+        method: "GET",
+        cache: "no-store",
+      });
     } catch (error: any) {
-      if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+      if (error.message?.includes("Failed to fetch") || error.message?.includes("NetworkError")) {
         throw new Error("El servicio de reservas se encuentra fuera de línea.");
+      }
+      if (error.status >= 500) {
+        throw new Error("El servicio de reservas no está disponible en este momento.");
       }
       console.error("BookingService Error:", error.message);
       throw error;
@@ -36,36 +24,23 @@ export const BookingService = {
 
   getByCustomer: async (customerId: number): Promise<BookingResponse[]> => {
     try {
-      const response = await fetch(
-        `${API_URL}/api/bookings?customerId=${customerId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-store",
-        },
-      );
-
-      if (!response.ok) {
-        if (response.status >= 500) {
-          throw new Error("El servicio de reservas no está disponible en este momento.");
-        }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Error al obtener las reservas del usuario");
-      }
-
-      return await response.json();
+      return await http<BookingResponse[]>(`/api/bookings?customerId=${customerId}`, {
+        method: "GET",
+        cache: "no-store",
+      });
     } catch (error: any) {
-      if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+      if (error.message?.includes("Failed to fetch") || error.message?.includes("NetworkError")) {
         throw new Error("El servicio de reservas se encuentra fuera de línea.");
+      }
+      if (error.status >= 500) {
+        throw new Error("El servicio de reservas no está disponible en este momento.");
       }
       console.error("BookingService Error:", error.message);
       throw error;
     }
   },
 
-  create: async (payload: {
+create: async (payload: {
     sportCourtId: number;
     customerAccountId: number;
     date: string;
@@ -74,68 +49,47 @@ export const BookingService = {
     price: number;
   }): Promise<BookingResponse> => {
     try {
-      const response = await fetch(`${API_URL}/api/bookings`, {
+      return await http<BookingResponse>(`/api/bookings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
-      if (!response.ok) {
-        if (response.status >= 500) {
-          throw new Error("El servicio de reservas no está disponible en este momento.");
-        }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Error al crear la reserva");
-      }
-
-      return await response.json();
     } catch (error: any) {
-      if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+      if (error.message?.includes("Failed to fetch") || error.message?.includes("NetworkError")) {
         throw new Error("El servicio de reservas se encuentra fuera de línea.");
+      }
+      if (error.status >= 500) {
+        throw new Error("El servicio de reservas no está disponible en este momento.");
       }
       console.error("BookingService Error:", error.message);
       throw error;
     }
   },
-
-  getAll: async (params: {
+getAll: async (params: {
     sportCourtId?: number;
     ownerId?: number;
   }): Promise<BookingResponse[]> => {
-    const query = new URLSearchParams();
-    if (params.sportCourtId)
-      query.append("sportCourtId", params.sportCourtId.toString());
-    if (params.ownerId) query.append("ownerId", params.ownerId.toString());
+    try {
+      const query = new URLSearchParams();
+      if (params.sportCourtId) query.append("sportCourtId", params.sportCourtId.toString());
+      if (params.ownerId) query.append("ownerId", params.ownerId.toString());
 
-    const response = await fetch(
-      `${API_URL}/api/bookings?${query.toString()}`,
-      {
-        cache: "no-store",
-      },
-    );
-
-    if (!response.ok) throw new Error("Error en la petición");
-    return response.json();
+      return await http<BookingResponse[]>(`/api/bookings?${query.toString()}`);
+    } catch (error: any) {
+      console.error("BookingService Error:", error.message);
+      throw new Error("Error en la petición");
+    }
   },
 
-  checkIn: async (
-    qrCode: string,
-    ownerId: number,
-  ): Promise<CheckInResponse> => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/bookings/checkin`,
-      {
+checkIn: async (qrCode: string, ownerId: number): Promise<CheckInResponse> => {
+    try {
+      return await http<CheckInResponse>(`/api/bookings/checkin`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ qrCode, ownerId }),
-      },
-    );
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || "Error al procesar el check-in");
+      });
+    } catch (error: any) {
+      // Mantenemos tu manejo de errores específico para check-in
+      console.error("BookingService Error:", error.message);
+      throw error; // http.ts ya lanza el error con el mensaje del backend
     }
-
-    return res.json();
   },
 };

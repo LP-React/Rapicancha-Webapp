@@ -1,4 +1,5 @@
 import { http } from "@/lib/http";
+import { setCookie } from "cookies-next";
 import {
   LoginRequest,
   LoginResponse,
@@ -33,12 +34,22 @@ export const AuthService = {
     }
   },
 
-  login: async (payload: LoginRequest): Promise<LoginResponse> => {
+login: async (payload: LoginRequest): Promise<LoginResponse> => {
     try {
-      return await http<LoginResponse>("/api/auth/login", {
+      const response = await http<LoginResponse>("/api/auth/login", {
         method: "POST",
         body: JSON.stringify(payload),
       });
+
+  if (response.token) {
+        setCookie("token", response.token, { 
+          maxAge: 60 * 60 * 24 * 7,
+          path: "/",
+          sameSite: 'lax',
+        });
+      }
+
+      return response;
     } catch (error: any) {
       if (error.status >= 500 || error.message?.includes("Failed to fetch")) {
         throw new Error("El servicio de autenticación no está disponible en este momento.");

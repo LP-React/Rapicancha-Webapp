@@ -1,24 +1,20 @@
 import { ExploreVenuesView } from "@/components/views/ExploreVenuesView";
 import { VenueResponse } from "@/types/api/venues/venue";
+import { http } from "@/lib/http";
 
 export default async function LocalesPage() {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/venues`,
-    {
+  try {
+    const venues = await http<VenueResponse[]>("/api/venues", {
       cache: "no-store",
-    }
-  );
+    });
 
-  if (!response.ok) {
+    return (
+      <ExploreVenuesView
+        venues={venues}
+      />
+    );
+  } catch (error) {
+    console.error("Error al cargar los locales:", error);
     return <div>Error cargando locales</div>;
   }
-
-  const venues: VenueResponse[] =
-    await response.json();
-
-  return (
-    <ExploreVenuesView
-      venues={venues}
-    />
-  );
 }
