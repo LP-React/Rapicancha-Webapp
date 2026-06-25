@@ -1,25 +1,15 @@
+import { http } from "@/lib/http";
 import {
   CreateSportCourtRequest,
   SportCourtResponse,
 } from "@/types/api/sport-courts/sportCourt";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 export const SportCourtService = {
   getByVenue: async (venueId: number): Promise<SportCourtResponse[]> => {
     try {
-      const response = await fetch(
-        `${API_URL}/api/sport-courts?idVenue=${venueId}`,
-        {
-          cache: "no-store",
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error al obtener canchas del local ${venueId}`);
-      }
-
-      return await response.json();
+      return await http<SportCourtResponse[]>(`/api/sport-courts?idVenue=${venueId}`, {
+        cache: "no-store",
+      });
     } catch (error) {
       console.error("CourtService getByVenue error:", error);
       return [];
@@ -29,19 +19,14 @@ export const SportCourtService = {
   create: async (
     courtData: CreateSportCourtRequest,
   ): Promise<SportCourtResponse> => {
-    const response = await fetch(`${API_URL}/api/sport-courts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(courtData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Error al crear la cancha");
+    try {
+      return await http<SportCourtResponse>(`/api/sport-courts`, {
+        method: "POST",
+        body: JSON.stringify(courtData),
+      });
+    } catch (error: any) {
+      const errorMessage = error.message || "Error al crear la cancha";
+      throw new Error(errorMessage);
     }
-
-    return await response.json();
   },
 };

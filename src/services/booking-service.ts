@@ -1,7 +1,6 @@
 import { BookingResponse, CheckInResponse } from "@/types/api/bookings/booking";
 import { http } from "@/lib/http";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const BookingService = {
   getBySportCourt: async (sportCourtId: number): Promise<BookingResponse[]> => {
@@ -87,9 +86,8 @@ checkIn: async (qrCode: string, ownerId: number): Promise<CheckInResponse> => {
         body: JSON.stringify({ qrCode, ownerId }),
       });
     } catch (error: any) {
-      // Mantenemos tu manejo de errores específico para check-in
       console.error("BookingService Error:", error.message);
-      throw error; // http.ts ya lanza el error con el mensaje del backend
+      throw error;
     }
   },
 };
