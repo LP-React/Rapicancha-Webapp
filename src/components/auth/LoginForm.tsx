@@ -122,7 +122,7 @@ export function LoginForm() {
         <p className="text-center text-sm text-muted-foreground">
           ¿No tienes una cuenta?{" "}
           <a
-            href="/signup"
+            href="/owner/signup"
             className="text-primary font-semibold hover:underline"
           >
             Regístrate

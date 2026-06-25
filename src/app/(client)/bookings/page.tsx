@@ -7,7 +7,16 @@ import { BookingService } from "@/services/booking-service";
 import { BookingResponse } from "@/types/api/bookings/booking";
 import { BottomNav } from "@/components/ui/botton-nav";
 import { deleteCookie } from "cookies-next";
-import { ChevronLeft, MapPin, CalendarDays, Clock, CheckCircle, XCircle, Clock4, LogOut } from "lucide-react";
+import {
+  ChevronLeft,
+  MapPin,
+  CalendarDays,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Clock4,
+  LogOut,
+} from "lucide-react";
 
 export default function BookingsPage() {
   const router = useRouter();
@@ -70,10 +79,14 @@ export default function BookingsPage() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "CONFIRMED": return "Validada";
-      case "CANCELLED": return "Cancelada";
-      case "PENDING": return "Pendiente de ingreso";
-      default: return status;
+      case "CONFIRMED":
+        return "Validada";
+      case "CANCELLED":
+        return "Cancelada";
+      case "PENDING":
+        return "Pendiente de ingreso";
+      default:
+        return status;
     }
   };
 
@@ -92,7 +105,9 @@ export default function BookingsPage() {
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-bold tracking-tight text-white">Mis Reservas</h1>
+        <h1 className="text-lg font-bold tracking-tight text-white">
+          Mis Reservas
+        </h1>
         <button
           onClick={() => {
             deleteCookie("auth_user");
@@ -128,7 +143,9 @@ export default function BookingsPage() {
             <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
               <CalendarDays className="w-10 h-10 text-white/30" />
             </div>
-            <h2 className="text-xl font-semibold text-white mb-2">Aún no tienes reservas</h2>
+            <h2 className="text-xl font-semibold text-white mb-2">
+              Aún no tienes reservas
+            </h2>
             <p className="text-[#a1a68d] mb-8 text-sm">
               Explora las canchas disponibles y asegura tu próximo partido.
             </p>
@@ -161,7 +178,7 @@ export default function BookingsPage() {
                   </div>
                   <div
                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium ${getStatusColor(
-                      booking.status
+                      booking.status,
                     )}`}
                   >
                     {getStatusIcon(booking.status)}
@@ -173,16 +190,23 @@ export default function BookingsPage() {
                   <div className="flex items-center gap-2">
                     <CalendarDays className="w-4 h-4 text-[#abd600]" />
                     <div>
-                      <p className="text-[10px] text-zinc-500 font-semibold uppercase">Fecha</p>
-                      <p className="text-sm font-medium text-zinc-200">{booking.date}</p>
+                      <p className="text-[10px] text-zinc-500 font-semibold uppercase">
+                        Fecha
+                      </p>
+                      <p className="text-sm font-medium text-zinc-200">
+                        {booking.date}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#abd600]" />
                     <div>
-                      <p className="text-[10px] text-zinc-500 font-semibold uppercase">Horario</p>
+                      <p className="text-[10px] text-zinc-500 font-semibold uppercase">
+                        Horario
+                      </p>
                       <p className="text-sm font-medium text-zinc-200">
-                        {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
+                        {formatTime(booking.startTime)} -{" "}
+                        {formatTime(booking.endTime)}
                       </p>
                     </div>
                   </div>
@@ -195,9 +219,9 @@ export default function BookingsPage() {
                       S/ {booking.price.toFixed(2)}
                     </p>
                   </div>
-                  
+
                   {booking.status === "PENDING" && (
-                    <button 
+                    <button
                       onClick={() => setSelectedQrCode(booking.qrCode)}
                       className="text-xs font-semibold text-[#111508] bg-[#abd600] px-4 py-2 rounded-full active:scale-95 transition-transform"
                     >
@@ -215,7 +239,7 @@ export default function BookingsPage() {
       {selectedQrCode && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-[#161e00] border border-[#abd600]/30 p-6 rounded-3xl w-full max-w-sm flex flex-col items-center shadow-2xl relative">
-            <button 
+            <button
               onClick={() => setSelectedQrCode(null)}
               className="absolute top-4 right-4 p-1 rounded-full text-white/50 hover:text-white bg-white/5 hover:bg-white/10 transition-colors"
             >
@@ -223,12 +247,13 @@ export default function BookingsPage() {
             </button>
             <h3 className="text-xl font-bold text-white mb-2">Tu Código QR</h3>
             <p className="text-sm text-[#a1a68d] text-center mb-6">
-              Muestra este código en la recepción para confirmar tu ingreso a la cancha.
+              Muestra este código en la recepción para confirmar tu ingreso a la
+              cancha.
             </p>
             <div className="bg-white p-4 rounded-2xl">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${selectedQrCode}`} 
-                alt="Booking QR Code" 
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https:localhost:3000/owner/${selectedQrCode}`}
+                alt="Booking QR Code"
                 className="w-48 h-48"
               />
             </div>

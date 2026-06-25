@@ -77,7 +77,7 @@ export function SuccessCheckInView({ data }: { data: CheckInResponse }) {
             {/* Actions */}
             <div className="flex flex-col gap-3">
               <Link
-                href="/dashboard"
+                href="/owner/dashboard"
                 className="w-full py-4 px-6 bg-[#2d4a41] text-white font-semibold rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-[#2d4a41]/20 flex items-center justify-center gap-2"
               >
                 Volver al Dashboard
